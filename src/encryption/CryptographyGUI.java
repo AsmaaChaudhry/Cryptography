@@ -1,4 +1,11 @@
+/**
+ * @author asmaachaudhry
+ * @date 4-26-21
+ * Only did some edits for Strategy Pattern Implementation
+ */
+
 package encryption;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -24,8 +31,7 @@ import javax.swing.JTextField;
  */
 public class CryptographyGUI extends JPanel {
     // Error message if the user does not enter a number for the key.
-    private static final String KEY_ERROR_MESSAGE = 
-            "Enter a number for the key.";
+    private static final String KEY_ERROR_MESSAGE = "Enter a number for the key.";
 
     // The width of the text areas for entering encrypted and decrypted text,
     // in characters
@@ -53,6 +59,9 @@ public class CryptographyGUI extends JPanel {
     // The text field where the user enters the key to use
     private JTextField keyField = new JTextField(10);
 
+    // Instance variable for EncryptionStraegy interface
+    private EncryptionStrategy Strategy;
+
     /**
      * Constructs the user interface for the program.
      */
@@ -61,9 +70,10 @@ public class CryptographyGUI extends JPanel {
         plainTextArea.setBorder(BorderFactory.createTitledBorder("Plain text"));
         cipherTextArea
                 .setBorder(BorderFactory.createTitledBorder("Cipher text"));
-        
+
         // Create the menu containing encryption options
         createMenu();
+        selectEncryption(COPY);
 
         // Add the buttons and key field to control the encryption and
         // decryption.
@@ -85,6 +95,7 @@ public class CryptographyGUI extends JPanel {
 
     /**
      * Creates the decrypt button.
+     * 
      * @return the button
      */
     private JButton createDecryptButton() {
@@ -97,11 +108,11 @@ public class CryptographyGUI extends JPanel {
                     // Get the key
                     String keyText = keyField.getText();
                     int key = Integer.parseInt(keyText);
-                    
+
                     // Do the decryption.
-                    String decryptedText = 
-                            decryptWithKey(cipherTextArea.getText(), key);
-                    
+                    String decryptedText = decryptWithKey(
+                            cipherTextArea.getText(), key);
+
                     // Display the decrypted text.
                     plainTextArea.setText(decryptedText);
                 } catch (NumberFormatException e) {
@@ -116,6 +127,7 @@ public class CryptographyGUI extends JPanel {
 
     /**
      * Creates the encrypt button.
+     * 
      * @return the button
      */
     private JButton createEncryptButton() {
@@ -128,11 +140,11 @@ public class CryptographyGUI extends JPanel {
                     // Get the key
                     String keyText = keyField.getText();
                     int key = Integer.parseInt(keyText);
-                    
+
                     // Do the encryption
-                    String encryptedText = 
-                            encryptWithKey(plainTextArea.getText(), key);
-                    
+                    String encryptedText = encryptWithKey(
+                            plainTextArea.getText(), key);
+
                     // Display the encrypted text
                     cipherTextArea.setText(encryptedText);
                 } catch (NumberFormatException e) {
@@ -153,12 +165,12 @@ public class CryptographyGUI extends JPanel {
         encryptionMenu.addItem(SCYTALE);
         encryptionMenu.addItemListener(new ItemListener() {
 
-            // Define the action to take when the user changes which 
+            // Define the action to take when the user changes which
             // algorithm to use.
             public void itemStateChanged(ItemEvent evt) {
                 if (evt.getStateChange() == ItemEvent.SELECTED) {
-                    String selected = 
-                            encryptionMenu.getSelectedItem().toString();
+                    String selected = encryptionMenu.getSelectedItem()
+                            .toString();
                     selectEncryption(selected);
                 }
             }
@@ -167,45 +179,45 @@ public class CryptographyGUI extends JPanel {
 
     /**
      * Selects the encryption algorithm to use
+     * 
      * @param selected the name of the algorithm
      */
     private void selectEncryption(String selected) {
         if (selected.equals(COPY)) {
-            // TODO: Replace with code to do encryption
-            System.out.println(COPY);
+            Strategy = new CopyStrategy();
+
         } else if (selected.equals(CAESAR)) {
-            // TODO: Replace with code to do encryption
-            System.out.println(CAESAR);
+            Strategy = new CaesarStrategy();
+
         } else if (selected.equals(SCYTALE)) {
-            // TODO: Replace with code to do encryption
-            System.out.println(SCYTALE);
+            Strategy = new ScytaleStrategy();
         }
     }
 
     /**
      * Encrypts text using the currently selected algorithm
+     * 
      * @param plainText the text to encrypt
-     * @param key the key the algorithm should use
+     * @param key       the key the algorithm should use
      * @return the encrypted text
      */
     private String encryptWithKey(String plainText, int key) {
-        // TODO: Replace with code to do the encryption and
         // return the encrypted string.
-        return "encrypted text";
+        return Strategy.encryptWithKey(plainText, key);
     }
-    
+
     /**
      * Decrypts text using the currently selected algorithm
+     * 
      * @param cipherText the text to encrypt
-     * @param key the key the algorithm should use
+     * @param key        the key the algorithm should use
      * @return the decrypted text
      */
     private String decryptWithKey(String cipherText, int key) {
-        // TODO: Replace with code to do the decryption and
         // return the unencrypted string.
-        return "decrypted text";
+        return Strategy.decryptWithKey(cipherText, key);
     }
-    
+
     /**
      * The main method to start the program.
      * 
